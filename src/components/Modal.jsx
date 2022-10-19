@@ -7,12 +7,16 @@ const Modal = ({setModal, animarModal, setAnimarModal, guardarGasto, editarGasto
     const [nombre, setNombre] = useState('')
     const [cantidad, setCantidad] = useState('')
     const [categoria, setCategoria] = useState('')
+    const [id, setId] = useState('')
+    const [fecha, setFecha] = useState('')
 
     useEffect(() => {
         if( Object.keys(editarGasto).length >0){
             setNombre(editarGasto.nombre)
             setCantidad(editarGasto.cantidad)
             setCategoria(editarGasto.categoria)
+            setId(editarGasto.id)
+            setFecha(editarGasto.fecha)
         }
     }, [])
     
@@ -29,7 +33,7 @@ const Modal = ({setModal, animarModal, setAnimarModal, guardarGasto, editarGasto
     const handleSubmit = e =>{
         e.preventDefault()
 
-        guardarGasto({nombre, cantidad, categoria})
+        guardarGasto({nombre, cantidad, categoria, id, fecha})
     }
 
     return (
