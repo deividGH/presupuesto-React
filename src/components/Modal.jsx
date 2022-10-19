@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import BotonCerrar from '../img/cerrar.svg'
 
 
-const Modal = ({setModal, animarModal, setAnimarModal, guardarGasto, editarGasto}) => {
+const Modal = ({setModal, animarModal, setAnimarModal, guardarGasto, editarGasto, setEditarGasto}) => {
 
     const [nombre, setNombre] = useState('')
     const [cantidad, setCantidad] = useState('')
@@ -24,6 +24,7 @@ const Modal = ({setModal, animarModal, setAnimarModal, guardarGasto, editarGasto
     const ocultarModal =()=>{
         
         setAnimarModal(false)
+        setEditarGasto({})
 
         setTimeout(() => {
             setModal(false)

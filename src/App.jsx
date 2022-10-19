@@ -43,9 +43,11 @@ function App() {
   const guardarGasto = (gasto) => {
     if (gasto.id) {
       //Actualizar con edición
-      const gastosActualizados = gastos.map( gastoState => gastoState.id === gasto.id ? gasto : gastoState)
-      setGastos(gastosActualizados)
-
+      const gastosActualizados = gastos.map((gastoState) =>
+        gastoState.id === gasto.id ? gasto : gastoState
+      );
+      setGastos(gastosActualizados);
+      setEditarGasto({})
     } else {
       //Nuevo gasto
       gasto.id = generarId();
@@ -57,6 +59,13 @@ function App() {
     setTimeout(() => {
       setModal(false);
     }, 500);
+  };
+
+  const eliminarGasto = (id) => {
+    console.log("Eliminando gasto", id);
+    const gastosActualizados = gastos.filter(gasto => gasto.id !== id)
+
+    setGastos(gastosActualizados)
   };
 
   return (
@@ -72,7 +81,11 @@ function App() {
       {validacion && (
         <>
           <main>
-            <ListadoGastos gastos={gastos} setEditarGasto={setEditarGasto} />
+            <ListadoGastos
+              gastos={gastos}
+              setEditarGasto={setEditarGasto}
+              eliminarGasto={eliminarGasto}
+            />
           </main>
           <div className="nuevo-gasto">
             <img
@@ -91,6 +104,7 @@ function App() {
           setAnimarModal={setAnimarModal}
           guardarGasto={guardarGasto}
           editarGasto={editarGasto}
+          setEditarGasto={setEditarGasto}
         />
       )}
     </div>
