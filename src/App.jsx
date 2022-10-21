@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import Modal from "./components/Modal";
+import Filtro from "./components/Filtro";
 import ListadoGastos from "./components/ListadoGastos";
 import iconoBotonAgregar from "./img/nuevo-gasto.svg";
 
@@ -8,15 +9,22 @@ import iconoBotonAgregar from "./img/nuevo-gasto.svg";
 import { generarId } from "./helpers";
 
 function App() {
-  const [presupuesto, setPresupuesto] = useState(0);
+  const [presupuesto, setPresupuesto] = useState(
+    localStorage.getItem('presupuesto') ?? 0
+  );
   const [validacion, setValidacion] = useState(false);
   const [modal, setModal] = useState(false);
   //Hook para la transición css
   const [animarModal, setAnimarModal] = useState(false);
 
-  const [gastos, setGastos] = useState([]);
+  const [gastos, setGastos] = useState(
+    localStorage.getItem('gastos') ? JSON.parse(localStorage.getItem('gastos')) : []
+  );
 
   const [editarGasto, setEditarGasto] = useState({});
+
+  const [filtro, setFiltro] = useState('')
+  const [gastosFiltrados, setGastosFiltrados] = useState([])
 
   useEffect(() => {
     if (Object.keys(editarGasto).length > 0) {
@@ -29,6 +37,31 @@ function App() {
       }, 500);
     }
   }, [editarGasto]);
+
+  useEffect(() => {
+    const presupuestoLS = Number(localStorage.getItem("presupuesto")) ?? 0;
+
+    if (presupuestoLS > 0){
+      setValidacion(true)
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("presupuesto", presupuesto ?? 0);
+  }, [presupuesto]);
+
+  useEffect(() => {
+    localStorage.setItem("gastos", JSON.stringify(gastos) ?? [])
+  }, [gastos])
+
+  useEffect(() => {
+    if(filtro){
+      const gastosFiltrados = gastos.filter( gasto => gasto.categoria === filtro)
+      setGastosFiltrados(gastosFiltrados)
+    }
+  }, [filtro])
+  
+  
 
   const handleNuevoGasto = () => {
     setModal(true);
@@ -47,7 +80,7 @@ function App() {
         gastoState.id === gasto.id ? gasto : gastoState
       );
       setGastos(gastosActualizados);
-      setEditarGasto({})
+      setEditarGasto({});
     } else {
       //Nuevo gasto
       gasto.id = generarId();
@@ -63,15 +96,16 @@ function App() {
 
   const eliminarGasto = (id) => {
     console.log("Eliminando gasto", id);
-    const gastosActualizados = gastos.filter(gasto => gasto.id !== id)
+    const gastosActualizados = gastos.filter((gasto) => gasto.id !== id);
 
-    setGastos(gastosActualizados)
+    setGastos(gastosActualizados);
   };
 
   return (
     <div className={modal ? "fijar" : ""}>
       <Header
         gastos={gastos}
+        setGastos={setGastos}
         presupuesto={presupuesto}
         setPresupuesto={setPresupuesto}
         validacion={validacion}
@@ -81,10 +115,17 @@ function App() {
       {validacion && (
         <>
           <main>
+            <Filtro
+              filtro ={filtro}
+              setFiltro ={setFiltro}
+            
+            />
             <ListadoGastos
               gastos={gastos}
               setEditarGasto={setEditarGasto}
               eliminarGasto={eliminarGasto}
+              filtro={filtro}
+              gastosFiltrados={gastosFiltrados}
             />
           </main>
           <div className="nuevo-gasto">
